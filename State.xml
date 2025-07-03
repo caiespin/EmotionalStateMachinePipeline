@@ -1,0 +1,59 @@
+<UMLStateMachine name="PipelineAgentStateMachine">
+  <InitialState name="InitPState">
+    <Transition event="ALARM" target="Awake"/>
+  </InitialState>
+
+  <State name="Awake">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="ENTER_LAB" target="LabMode"/>
+    <Transition event="PHONE_USE" target="PhoneMode"/>
+    <Transition event="TIRED" target="Sleep"/>
+    <Transition event="ARRIVE_HOME" target="HomeMode"/>
+  </State>
+
+  <State name="PhoneMode">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="ARRIVE_LAB" target="LabMode"/>
+    <Transition event="SLEEP_SIGNAL" target="Sleep"/>
+  </State>
+
+  <State name="LabMode">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="FATIGUE" target="Pause"/>
+    <Transition event="ENLIGHTENMENT" target="EnlightenmentEvent"/>
+  </State>
+
+  <State name="Pause">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="READY" target="LabMode"/>
+    <Transition event="READY" target="Awake"/>
+  </State>
+
+  <State name="EnlightenmentEvent">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="ANY" target="Sleep"/>
+    <Transition event="ANY" target="Awake"/>
+    <Transition event="ANY" target="LabMode"/>
+    <Transition event="ANY" target="PhoneMode"/>
+    <Transition event="ANY" target="HomeMode"/>
+    <Transition event="ANY" target="Sage"/>
+  </State>
+
+  <State name="HomeMode">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="STABILIZED" target="Awake"/>
+    <Transition event="SLEEP_SIGNAL" target="Sleep"/>
+  </State>
+
+  <State name="Sage">
+    <Entry></Entry>
+    <Exit></Exit>
+    <Transition event="STABILIZED" target="Awake"/>
+  </State>
+</UMLStateMachine>
