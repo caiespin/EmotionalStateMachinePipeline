@@ -1,59 +1,40 @@
-<UMLStateMachine name="PipelineAgentStateMachine">
-  <InitialState name="InitPState">
-    <Transition event="ALARM" target="Awake"/>
+<UMLStateMachine name="EmotionalStateMachine">
+  <InitialState name="Calm">
+    <Transition event="ENERGIZE" target="Joy"/>
+    <Transition event="TIRED" target="Fatigue"/>
   </InitialState>
 
-  <State name="Awake">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="ENTER_LAB" target="LabMode"/>
-    <Transition event="PHONE_USE" target="PhoneMode"/>
-    <Transition event="TIRED" target="Sleep"/>
-    <Transition event="ARRIVE_HOME" target="HomeMode"/>
+  <State name="Calm">
+    <Entry>BreathDeeply();</Entry>
+    <Exit>PrepareForEmotionChange();</Exit>
+    <SubHSM>CalmBreathHSM</SubHSM>
   </State>
 
-  <State name="PhoneMode">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="ARRIVE_LAB" target="LabMode"/>
-    <Transition event="SLEEP_SIGNAL" target="Sleep"/>
+  <State name="Joy">
+    <Entry>Smile();</Entry>
+    <Exit>RelaxFaceMuscles();</Exit>
+    <SubHSM>JoyExpansionHSM</SubHSM>
+    <Transition event="CALM_DOWN" target="Calm"/>
+    <Transition event="OVERLOAD" target="Overwhelm"/>
   </State>
 
-  <State name="LabMode">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="FATIGUE" target="Pause"/>
-    <Transition event="ENLIGHTENMENT" target="EnlightenmentEvent"/>
+  <State name="Fatigue">
+    <Entry>SlowBreathing();</Entry>
+    <Exit>Stretch();</Exit>
+    <Transition event="REST" target="Calm"/>
+    <Transition event="EXHAUSTION" target="Overwhelm"/>
   </State>
 
-  <State name="Pause">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="READY" target="LabMode"/>
-    <Transition event="READY" target="Awake"/>
-  </State>
-
-  <State name="EnlightenmentEvent">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="ANY" target="Sleep"/>
-    <Transition event="ANY" target="Awake"/>
-    <Transition event="ANY" target="LabMode"/>
-    <Transition event="ANY" target="PhoneMode"/>
-    <Transition event="ANY" target="HomeMode"/>
-    <Transition event="ANY" target="Sage"/>
-  </State>
-
-  <State name="HomeMode">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="STABILIZED" target="Awake"/>
-    <Transition event="SLEEP_SIGNAL" target="Sleep"/>
+  <State name="Overwhelm">
+    <Entry>CloseEyes();</Entry>
+    <Exit>OpenEyes();</Exit>
+    <Transition event="STABILIZE" target="Calm"/>
+    <Transition event="INSIGHT" target="Sage"/>
   </State>
 
   <State name="Sage">
-    <Entry></Entry>
-    <Exit></Exit>
-    <Transition event="STABILIZED" target="Awake"/>
+    <Entry>InvokeWisdom();</Entry>
+    <Exit>ReleaseWisdom();</Exit>
+    <Transition event="RETURN" target="Calm"/>
   </State>
 </UMLStateMachine>
