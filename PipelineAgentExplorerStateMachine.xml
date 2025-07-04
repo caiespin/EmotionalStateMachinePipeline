@@ -1,0 +1,54 @@
+<UMLStateMachine name="EmotionalOdometryStateMachine">
+
+  <InitialState name="InitPState">
+    <Transition event="ES_INIT" target="Awakening">
+      <Action>InitializeEmotionalMap();</Action>
+    </Transition>
+  </InitialState>
+
+  <State name="Awakening">
+    <Entry>CalibrateSensors();</Entry>
+    <Exit>ConfirmCalibration();</Exit>
+    <SubHSM>SensorCalibrationHSM</SubHSM>
+    <Transition event="CALIBRATED" target="Perceiving">
+      <Action>RecordBaselinePerception();</Action>
+    </Transition>
+  </State>
+
+  <State name="Perceiving">
+    <Entry>ActivatePerceptualNetwork();</Entry>
+    <Exit>DeactivatePerceptualNetwork();</Exit>
+    <SubHSM>PerceptionAnalysisHSM</SubHSM>
+    <Transition event="PERCEPTION_COMPLETE" target="Reflecting">
+      <Action>StorePerceptualSnapshot();</Action>
+    </Transition>
+  </State>
+
+  <State name="Reflecting">
+    <Entry>BeginIntrospectiveLoop();</Entry>
+    <Exit>EndIntrospectiveLoop();</Exit>
+    <SubHSM>IntrospectionProcessorHSM</SubHSM>
+    <Transition event="INSIGHT_FORMED" target="Integrating">
+      <Action>GenerateNarrativeChunk();</Action>
+    </Transition>
+  </State>
+
+  <State name="Integrating">
+    <Entry>StartIntegrationTimer(2000);</Entry>
+    <Exit>StopIntegrationTimer();</Exit>
+    <SubHSM>MemoryConsolidationHSM</SubHSM>
+    <Transition event="INTEGRATION_COMPLETE" target="Mapping">
+      <Action>UpdateInternalOdometry();</Action>
+    </Transition>
+  </State>
+
+  <State name="Mapping">
+    <Entry>VisualizeUpdatedMap();</Entry>
+    <Exit>StoreMapVisualization();</Exit>
+    <SubHSM>MapRenderHSM</SubHSM>
+    <Transition event="MAP_REVIEWED" target="Awakening">
+      <Action>CloseCurrentCycle();</Action>
+    </Transition>
+  </State>
+
+</UMLStateMachine>

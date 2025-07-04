@@ -1,22 +1,47 @@
-digraph EmotionalStateMachine {
+digraph SubNormalOperationHSM {
   rankdir=TB;
-  bgcolor="#0a192f";
-  node [shape=box, style="rounded,filled", fillcolor="#112240", fontcolor="#64ffda", fontname="Helvetica", fontsize=10, color="#64ffda"];
-  edge [color="#64ffda", fontname="Helvetica", fontsize=9, fontcolor="#64ffda", penwidth=1.2, arrowsize=1.5];
-
-  Calm [shape=circle, fixedsize=true, width=0.3, style=filled, fillcolor="#64ffda", label=""];
-  Calm -> Joy [label="ENERGIZE"];
-  Calm -> Fatigue [label="TIRED"];
-  Calm [label="Calm"];
-  Joy [label="Joy"];
-  Joy -> Calm [label="CALM_DOWN"];
-  Joy -> Overwhelm [label="OVERLOAD"];
-  Fatigue [label="Fatigue"];
-  Fatigue -> Calm [label="REST"];
-  Fatigue -> Overwhelm [label="EXHAUSTION"];
-  Overwhelm [label="Overwhelm"];
-  Overwhelm -> Calm [label="STABILIZE"];
-  Overwhelm -> Sage [label="INSIGHT"];
-  Sage [label="Sage"];
-  Sage -> Calm [label="RETURN"];
+  node [fontname="Helvetica", shape=box, style=rounded, fontsize=10];
+  InitPSubState [shape=circle, fixedsize=true, width=0.2, style=filled, fillcolor=black, label=""];
+  InitPSubState -> GreenLight [label="ES_INIT"];
+  GreenLight [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6"><TR><TD BORDER="1" SIDES="B"><B>GreenLight</B></TD></TR><TR><TD ALIGN="LEFT">/Entry: 
+      SetTrafficLightGreen();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, GREEN_TIME);
+    </TD></TR><TR><TD ALIGN="LEFT">/Exit: 
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </TD></TR></TABLE>>];
+  GreenLight -> FlashingGreen [label="ES_TIMEOUT\nif(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)"];
+  FlashingGreen [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6"><TR><TD BORDER="1" SIDES="B"><B>FlashingGreen</B></TD></TR><TR><TD ALIGN="LEFT">/Entry: 
+      flashCount = 0; 
+      ToggleGreenLight();
+      flashCount = flashCount + 1;
+      ES_Timer_InitTimer(FLASH_TIMER, FLASH_PERIOD);
+    </TD></TR><TR><TD ALIGN="LEFT">/Exit: 
+      ES_Timer_StopTimer(FLASH_TIMER);
+    </TD></TR></TABLE>>];
+  FlashingGreen -> FlashingGreen [label="ES_TIMEOUT\nif(ThisEvent.EventParam == FLASH_TIMER && flashCount < MAX_FLASHES)"];
+  FlashingGreen -> YellowLight [label="ES_TIMEOUT\nif(ThisEvent.EventParam == FLASH_TIMER && flashCount >= MAX_FLASHES)"];
+  YellowLight [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6"><TR><TD BORDER="1" SIDES="B"><B>YellowLight</B></TD></TR><TR><TD ALIGN="LEFT">/Entry: 
+      SetTrafficLightYellow();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, YELLOW_TIME);
+    </TD></TR><TR><TD ALIGN="LEFT">/Exit: 
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </TD></TR></TABLE>>];
+  YellowLight -> RedLight [label="ES_TIMEOUT\nif(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)"];
+  RedLight [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6"><TR><TD BORDER="1" SIDES="B"><B>RedLight</B></TD></TR><TR><TD ALIGN="LEFT">/Entry: 
+      SetTrafficLightRed();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, RED_TIME);
+    </TD></TR><TR><TD ALIGN="LEFT">/Exit: 
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </TD></TR></TABLE>>];
+  RedLight -> FlashingRed [label="ES_TIMEOUT\nif(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)"];
+  FlashingRed [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="6"><TR><TD BORDER="1" SIDES="B"><B>FlashingRed</B></TD></TR><TR><TD ALIGN="LEFT">/Entry: 
+      flashCount = 0; 
+      ToggleRedLight();
+      flashCount = flashCount + 1;
+      ES_Timer_InitTimer(FLASH_TIMER, FLASH_PERIOD);
+    </TD></TR><TR><TD ALIGN="LEFT">/Exit: 
+      ES_Timer_StopTimer(FLASH_TIMER);
+    </TD></TR></TABLE>>];
+  FlashingRed -> FlashingRed [label="ES_TIMEOUT\nif(ThisEvent.EventParam == FLASH_TIMER && flashCount < MAX_FLASHES)"];
+  FlashingRed -> GreenLight [label="ES_TIMEOUT\nif(ThisEvent.EventParam == FLASH_TIMER && flashCount >= MAX_FLASHES)"];
 }

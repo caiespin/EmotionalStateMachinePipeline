@@ -1,40 +1,82 @@
-<UMLStateMachine name="EmotionalStateMachine">
-  <InitialState name="Calm">
-    <Transition event="ENERGIZE" target="Joy"/>
-    <Transition event="TIRED" target="Fatigue"/>
+<UMLStateMachine name="SubNormalOperationHSM">
+
+  <InitialState name="InitPSubState">
+    <Transition event="ES_INIT" target="GreenLight"/>
   </InitialState>
 
-  <State name="Calm">
-    <Entry>BreathDeeply();</Entry>
-    <Exit>PrepareForEmotionChange();</Exit>
-    <SubHSM>CalmBreathHSM</SubHSM>
+  <State name="GreenLight">
+    <Entry>
+      SetTrafficLightGreen();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, GREEN_TIME);
+    </Entry>
+    <Exit>
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </Exit>
+    <Transition event="ES_TIMEOUT" target="FlashingGreen">
+      <Action>if(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)</Action>
+    </Transition>
   </State>
 
-  <State name="Joy">
-    <Entry>Smile();</Entry>
-    <Exit>RelaxFaceMuscles();</Exit>
-    <SubHSM>JoyExpansionHSM</SubHSM>
-    <Transition event="CALM_DOWN" target="Calm"/>
-    <Transition event="OVERLOAD" target="Overwhelm"/>
+  <State name="FlashingGreen">
+    <Entry>
+      flashCount = 0; <!-- reset count on entry -->
+      ToggleGreenLight();
+      flashCount = flashCount + 1;
+      ES_Timer_InitTimer(FLASH_TIMER, FLASH_PERIOD);
+    </Entry>
+    <Exit>
+      ES_Timer_StopTimer(FLASH_TIMER);
+    </Exit>
+    <Transition event="ES_TIMEOUT" target="FlashingGreen">
+      <Action>if(ThisEvent.EventParam == FLASH_TIMER &amp;&amp; flashCount &lt; MAX_FLASHES)</Action>
+    </Transition>
+    <Transition event="ES_TIMEOUT" target="YellowLight">
+      <Action>if(ThisEvent.EventParam == FLASH_TIMER &amp;&amp; flashCount &gt;= MAX_FLASHES)</Action>
+    </Transition>
   </State>
 
-  <State name="Fatigue">
-    <Entry>SlowBreathing();</Entry>
-    <Exit>Stretch();</Exit>
-    <Transition event="REST" target="Calm"/>
-    <Transition event="EXHAUSTION" target="Overwhelm"/>
+  <State name="YellowLight">
+    <Entry>
+      SetTrafficLightYellow();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, YELLOW_TIME);
+    </Entry>
+    <Exit>
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </Exit>
+    <Transition event="ES_TIMEOUT" target="RedLight">
+      <Action>if(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)</Action>
+    </Transition>
   </State>
 
-  <State name="Overwhelm">
-    <Entry>CloseEyes();</Entry>
-    <Exit>OpenEyes();</Exit>
-    <Transition event="STABILIZE" target="Calm"/>
-    <Transition event="INSIGHT" target="Sage"/>
+  <State name="RedLight">
+    <Entry>
+      SetTrafficLightRed();
+      ES_Timer_InitTimer(NORMAL_CYCLE_TIMER, RED_TIME);
+    </Entry>
+    <Exit>
+      ES_Timer_StopTimer(NORMAL_CYCLE_TIMER);
+    </Exit>
+    <Transition event="ES_TIMEOUT" target="FlashingRed">
+      <Action>if(ThisEvent.EventParam == NORMAL_CYCLE_TIMER)</Action>
+    </Transition>
   </State>
 
-  <State name="Sage">
-    <Entry>InvokeWisdom();</Entry>
-    <Exit>ReleaseWisdom();</Exit>
-    <Transition event="RETURN" target="Calm"/>
+  <State name="FlashingRed">
+    <Entry>
+      flashCount = 0; <!-- reset count on entry -->
+      ToggleRedLight();
+      flashCount = flashCount + 1;
+      ES_Timer_InitTimer(FLASH_TIMER, FLASH_PERIOD);
+    </Entry>
+    <Exit>
+      ES_Timer_StopTimer(FLASH_TIMER);
+    </Exit>
+    <Transition event="ES_TIMEOUT" target="FlashingRed">
+      <Action>if(ThisEvent.EventParam == FLASH_TIMER &amp;&amp; flashCount &lt; MAX_FLASHES)</Action>
+    </Transition>
+    <Transition event="ES_TIMEOUT" target="GreenLight">
+      <Action>if(ThisEvent.EventParam == FLASH_TIMER &amp;&amp; flashCount &gt;= MAX_FLASHES)</Action>
+    </Transition>
   </State>
+
 </UMLStateMachine>
